@@ -3,10 +3,9 @@ import { Redis } from "@upstash/redis";
 import dotenv from "dotenv";
 
 dotenv.config();
-//rate limit set to 10 request per 20seconds
 const ratelimit = new Ratelimit({
     redis:Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(10,"20 s")
+    limiter: Ratelimit.slidingWindow(100,"60 s")
 });
 
 export default ratelimit;
