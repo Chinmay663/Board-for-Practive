@@ -1,6 +1,7 @@
 A full-stack notes application built with the MERN stack, allowing users to create, view, update, and delete notes through a simple and responsive interface.
 
  **Features**
+ 
 Create and manage notes
 View individual notes
 Edit note content
