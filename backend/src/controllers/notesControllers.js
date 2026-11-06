@@ -3,7 +3,7 @@ import Note from "../models/Note.js"
 //get all Notes
 export async function getAllNotes (req, res) {
     try{
-        const notes= await Note.find();
+        const notes= await Note.find({user: req.user.id});
         res.status(200).json(notes);
 
     }catch(error){
@@ -16,7 +16,7 @@ export async function getAllNotes (req, res) {
 // will fetch when /api/notes/latest is called
 export async function getSortLatestFirst (req, res) {
     try{
-        const notes= await Note.find().sort({createdAt:-1});
+        const notes= await Note.find({user: req.user.id}).sort({createdAt:-1});
         res.status(200).json(notes);
 
     }catch(error){
@@ -29,7 +29,10 @@ export async function getSortLatestFirst (req, res) {
 //get Notes by ID
 export async function getNotesById (req, res) {
     try{
-        const notes= await Note.findById(req.params.id);
+        const notes= await Note.findOne({
+            _id: req.params.id,
+            user: req.user.id,
+        });
         if(!notes) return res.status(404).json({message:"Note not found"});
         res.status(200).json(notes);
 
@@ -43,7 +46,7 @@ export async function getNotesById (req, res) {
 export async function createNote (req, res) {
     try {
         const {title,content}=req.body;
-        const newNote = new Note({title,content});
+        const newNote = new Note({title,content,user: req.user.id});
         const saved = await newNote.save();
         res.status(201).json({
             message: "Note created successfully",
@@ -60,7 +63,16 @@ export async function createNote (req, res) {
 export async function updateNote (req, res) {
     try {
         const {title,content}=req.body;
-        const updateNote= await Note.findByIdAndUpdate(req.params.id,{"title":title,"content":content},{new:true});
+        const updateNote= await Note.findOneAndUpdate(
+            {
+                _id:req.params.id,
+                user: req.user.id,
+            },
+            {
+                "title":title,
+                "content":content
+            },{new:true}
+        );
         if(!updateNote) return res.status(404).json({message:"Note not found"});
         res.status(200).json({
             message:"Updated Succesfully",
@@ -75,7 +87,10 @@ export async function updateNote (req, res) {
 //Delete Notes
 export async function deleteNote (req, res) {
     try {
-        const deleteNote= await Note.findByIdAndDelete(req.params.id);
+        const deleteNote= await Note.findOneAndDelete({
+            _id: req.params.id,
+            user: req.user.id,
+        });
 
         if(!deleteNote) return res.status(404).json({message:"Note not found"})
         res.status(200).json({

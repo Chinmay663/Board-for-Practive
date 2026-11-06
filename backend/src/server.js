@@ -4,6 +4,7 @@ import cors from "cors";
 import path from "path";
 
 import notesRoutes from "./routes/notesRoutes.js"
+import usersRoutes from "./routes/usersRoutes.js"
 import { connectDB } from "./config/db.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 
@@ -21,6 +22,7 @@ if(process.env.NODE_ENV !== "production"){
 app.use(express.json());
 app.use(rateLimiter);
 app.use("/api/notes", notesRoutes);
+app.use("/api/users", usersRoutes);
 app.use(express.static(path.join(__dirname,"../frontend/dist")));
 
 if(process.env.NODE_ENV === "production"){
